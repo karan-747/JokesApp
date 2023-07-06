@@ -3,25 +3,33 @@ package com.example.jokesapp
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.TokenWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.liveData
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.example.jokesapp.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,13 +60,7 @@ class MainActivity : AppCompatActivity() {
             orientation = ViewPager2.ORIENTATION_VERTICAL
 
         }
-
-
-        val jokesLiveData = liveData {
-            val data = mainActivityViewModel.getJokeResponse()
-            emit(data)
-        }
-
+        binding.lottieSwipeUp.isVisible = false
 
         binding.imageView.setOnClickListener {
             refreshJokes =true
@@ -66,17 +68,6 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        jokesLiveData.observe(this, Observer {
-            val jokeResponse = it?.body()
-            if(it.isSuccessful){
-                myJokesLiveData.value = jokeResponse?.jokes!!
-                //viewPagerAdapter.addJokes(jokeResponse?.jokes!!)
-            }
-            else{
-                Log.d("JOKES","Failure")
-            }
-
-        })
 
         myJokesLiveData.observe(this, Observer {
 
@@ -91,13 +82,48 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        //loadMoreJokes()
+
+
         binding.viewPager.registerOnPageChangeCallback(object: OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if(position%10 == 8){
-                    //Toast.makeText(this@MainActivity,"Hello",Toast.LENGTH_SHORT).show()
+                binding.lottieSwipeUp.isVisible = false
+                if(position%10 == 9){
                     loadMoreJokes()
+
                 }
+                if(position == 0){
+                    lifecycleScope.launch {
+                        delay(4000)
+                        withContext(Dispatchers.Main){
+                            binding.lottieSwipeUp.isVisible = true
+                        }
+                    }
+                }
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                binding.lottieSwipeUp.isVisible = false
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                if(state ==  ViewPager2.SCROLL_STATE_IDLE){
+                    lifecycleScope.launch {
+                        delay(4000)
+                        withContext(Dispatchers.Main){
+                            binding.lottieSwipeUp.isVisible = true
+                        }
+                    }
+                }
+
+
             }
 
         })
@@ -110,27 +136,44 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
+        loadMoreJokes()
         checkMode()
     }
 
 
 
     fun loadMoreJokes(){
-        val jokeLiveData = liveData {
-            emit(mainActivityViewModel.getJokeResponse())
-        }
-        jokeLiveData.observe(this, Observer {
-            val jokeResponse = it?.body()
-            if(it.isSuccessful){
-                myJokesLiveData.value = jokeResponse?.jokes!!
-                //viewPagerAdapter.addJokes(jokeResponse?.jokes!!)
-            }
-            else{
-                Log.d("JOKES","Failure")
-            }
+        lifecycleScope.launch {
+            val response = try {
+                mainActivityViewModel.getJokeResponse()
 
-        })
+            }catch (e:IOException){
+                withContext(Dispatchers.Main){
+
+                    //Log.d("TAGY-IOException",e.cause.toString())
+                    Toast.makeText(this@MainActivity,"Network Error",Toast.LENGTH_LONG).show()
+                }
+                return@launch
+            }
+            catch (e:HttpException){
+                withContext(Dispatchers.Main){
+
+                    //Log.d("TAGY-HttpException",e.cause.toString())
+                    Toast.makeText(this@MainActivity, e.cause.toString(),Toast.LENGTH_LONG).show()
+                }
+                return@launch
+            }
+            catch (e:Exception){
+                withContext(Dispatchers.Main){
+                    //Log.d("TAGY-Exception",e.cause.toString())
+                    Toast.makeText(this@MainActivity,e.message.toString(),Toast.LENGTH_LONG).show()
+                }
+                return@launch
+            }
+            myJokesLiveData.value = response.body()?.jokes
+
+
+        }
     }
 
 

@@ -9,10 +9,10 @@
         android:id="@+id/tvSetup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/virtuous_slab"
+        android:fontFamily="@font/virtuous_slab_bold"
         android:lineSpacingExtra="5sp"
         android:text="Why did the programmer quit his job?"
-        android:textSize="16sp"
+        android:textSize="28sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
@@ -22,12 +22,12 @@
         android:id="@+id/tvDelivery"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/virtuous_slab"
         android:lineSpacingExtra="3dp"
         android:text="Because he didn't get arrays."
-        android:textSize="14sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/tvSetup"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tvSetup"
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.3" />
+        app:layout_constraintGuide_percent="0.32" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
@@ -76,11 +76,11 @@
         android:id="@+id/tvCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/virtuous_slab_italic"
         android:text="-Programming"
 
-        android:textSize="12sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toBottomOf="@+id/tvDelivery" />
 
@@ -89,9 +89,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/virtuous_slab_bold"
+        android:fontFamily="@font/virtuous_slab_italic"
         android:text="1"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toStartOf="@+id/guideline3" />
 
@@ -100,6 +100,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.15" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

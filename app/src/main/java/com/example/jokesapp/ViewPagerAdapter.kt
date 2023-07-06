@@ -11,7 +11,7 @@ class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.JokeViewHolder>()
 
     inner class JokeViewHolder( val binding: JokeLayoutBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(joke: Joke ){
-            binding.tvCategory.text = joke.category
+            binding.tvCategory.text = "-${joke.category}"
             binding.tvSetup.text = joke.setup
             binding.tvDelivery.text = joke.delivery
         }
